@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const programmingList = document.getElementById('programmingList');
     const searchBox = document.getElementById('searchBox');
+    const searchButton = document.getElementById('searchButton');
+    const clearButton = document.getElementById('clearButton');
     const selectParentsCheckbox = document.getElementById('selectParents');
     const generateButton = document.getElementById('generateButton');
     const outputText = document.getElementById('outputText');
@@ -15,8 +17,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             html += `<div class="section" id="${id}">`;
             html += `<div class="section-header">`;
+            html += `<input type="checkbox" class="item-checkbox">`;
             html += `<span>${key}</span>`;
-            html += `<button class="info-button" onclick="showDescription('${id}')">(i)</button>`;
+            html += `<button class="toggle-button">+</button>`;
             html += `</div>`;
             if (isObject) {
                 html += `<div class="section-content">${buildList(value, id)}</div>`;
@@ -28,18 +31,28 @@ document.addEventListener('DOMContentLoaded', function () {
         return html;
     }
 
-    // Function to show description
-    window.showDescription = function (id) {
-        const section = document.getElementById(id);
-        alert(`Description for ${id}: This is a placeholder description.`);
-    };
+    // Function to toggle section visibility
+    function toggleSection(section) {
+        const content = section.querySelector('.section-content');
+        const button = section.querySelector('.toggle-button');
+        if (content.classList.contains('open')) {
+            content.classList.remove('open');
+            button.textContent = '+';
+        } else {
+            content.classList.add('open');
+            button.textContent = '-';
+        }
+    }
 
     // Function to search and highlight matches
     function searchList(query) {
         const sections = document.querySelectorAll('.section');
         sections.forEach(section => {
             const content = section.textContent.toLowerCase();
-            if (content.includes(query.toLowerCase())) {
+            const normalizedQuery = query.toLowerCase().split(' ').sort().join(' ');
+            const normalizedContent = content.split(' ').sort().join(' ');
+
+            if (normalizedContent.includes(normalizedQuery)) {
                 section.classList.add('highlight');
                 section.querySelector('.section-content').classList.add('open');
             } else {
@@ -49,9 +62,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Event listener for search box
-    searchBox.addEventListener('input', function () {
-        searchList(this.value);
+    // Event listener for search button
+    searchButton.addEventListener('click', function () {
+        searchList(searchBox.value);
+    });
+
+    // Event listener for clear button
+    clearButton.addEventListener('click', function () {
+        searchBox.value = '';
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            section.classList.remove('highlight');
+            section.querySelector('.section-content').classList.remove('open');
+            section.querySelector('.toggle-button').textContent = '+';
+        });
+        outputText.value = '';
     });
 
     // Event listener for generate button
@@ -61,6 +86,14 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedItems.push(checkbox.parentElement.textContent.trim());
         });
         outputText.value = selectedItems.join('\n');
+    });
+
+    // Event delegation for toggle buttons
+    programmingList.addEventListener('click', function (event) {
+        if (event.target.classList.contains('toggle-button')) {
+            const section = event.target.closest('.section');
+            toggleSection(section);
+        }
     });
 
     // Populate the list
