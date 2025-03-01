@@ -8,10 +8,20 @@ body {
     margin: 0 auto;
 }
 
-#searchBox {
-    width: 100%;
-    padding: 10px;
+.search-container {
+    display: flex;
+    gap: 10px;
     margin-bottom: 20px;
+}
+
+#searchBox {
+    flex: 1;
+    padding: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    cursor: pointer;
 }
 
 #programmingList {
@@ -24,7 +34,7 @@ body {
 
 .section-header {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
     background-color: #f1f1f1;
     padding: 10px;
     cursor: pointer;
@@ -32,6 +42,18 @@ body {
 
 .section-header:hover {
     background-color: #ddd;
+}
+
+.section-header input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.section-header button {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
 }
 
 .section-content {
@@ -46,18 +68,6 @@ body {
 
 .highlight {
     background-color: yellow;
-}
-
-.info-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.info-button:hover {
-    background-color: #0056b3;
 }
 
 #outputText {
