@@ -29,19 +29,14 @@ button {
 }
 
 .section {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .section-header {
     display: flex;
     align-items: center;
-    background-color: #f1f1f1;
-    padding: 10px;
     cursor: pointer;
-}
-
-.section-header:hover {
-    background-color: #ddd;
+    padding: 5px 0;
 }
 
 .section-header input[type="checkbox"] {
@@ -49,7 +44,7 @@ button {
 }
 
 .section-header button {
-    margin-left: auto;
+    margin-right: 10px;
     background: none;
     border: none;
     font-size: 1.2em;
@@ -57,8 +52,7 @@ button {
 }
 
 .section-content {
-    padding: 10px;
-    border: 1px solid #ddd;
+    margin-left: 20px;
     display: none;
 }
 
