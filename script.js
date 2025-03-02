@@ -50,27 +50,30 @@ document.addEventListener('DOMContentLoaded', function () {
         const searchTerms = query.toLowerCase().split(' ').filter(term => term.trim() !== '');
 
         sections.forEach(section => {
+            const label = section.querySelector('.section-header span');
             const content = section.textContent.toLowerCase();
             const matchesAllTerms = searchTerms.every(term => content.includes(term));
 
             if (matchesAllTerms) {
-                section.classList.add('highlight');
+                // Expand the section
                 section.querySelector('.section-content').classList.add('open');
-                // Highlight matching text
-                const span = section.querySelector('span');
-                if (span) {
-                    span.innerHTML = span.textContent.replace(
+                section.querySelector('.toggle-button').textContent = '-';
+
+                // Highlight matching text in the label
+                if (label) {
+                    label.innerHTML = label.textContent.replace(
                         new RegExp(`(${searchTerms.join('|')})`, 'gi'),
                         '<span class="highlight">$1</span>'
                     );
                 }
             } else {
-                section.classList.remove('highlight');
+                // Collapse the section
                 section.querySelector('.section-content').classList.remove('open');
-                // Remove highlighting
-                const span = section.querySelector('span');
-                if (span) {
-                    span.innerHTML = span.textContent;
+                section.querySelector('.toggle-button').textContent = '+';
+
+                // Remove highlighting from the label
+                if (label) {
+                    label.innerHTML = label.textContent;
                 }
             }
         });
@@ -93,13 +96,12 @@ document.addEventListener('DOMContentLoaded', function () {
         searchBox.value = '';
         const sections = document.querySelectorAll('.section');
         sections.forEach(section => {
-            section.classList.remove('highlight');
             section.querySelector('.section-content').classList.remove('open');
             section.querySelector('.toggle-button').textContent = '+';
             // Remove highlighting
-            const span = section.querySelector('span');
-            if (span) {
-                span.innerHTML = span.textContent;
+            const label = section.querySelector('.section-header span');
+            if (label) {
+                label.innerHTML = label.textContent;
             }
         });
         outputText.value = '';
