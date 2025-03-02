@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
             html += `<div class="section" id="${id}">`;
             html += `<div class="section-header">`;
             html += `<input type="checkbox" class="item-checkbox">`;
-            html += `<span>${key}</span>`;
             html += `<button class="toggle-button">+</button>`;
+            html += `<span>${key}</span>`;
             html += `</div>`;
             if (isObject) {
                 html += `<div class="section-content">${buildList(value, id)}</div>`;
@@ -47,17 +47,31 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to search and highlight matches
     function searchList(query) {
         const sections = document.querySelectorAll('.section');
+        const searchTerms = query.toLowerCase().split(' ').filter(term => term.trim() !== '');
+
         sections.forEach(section => {
             const content = section.textContent.toLowerCase();
-            const normalizedQuery = query.toLowerCase().split(' ').sort().join(' ');
-            const normalizedContent = content.split(' ').sort().join(' ');
+            const matchesAllTerms = searchTerms.every(term => content.includes(term));
 
-            if (normalizedContent.includes(normalizedQuery)) {
+            if (matchesAllTerms) {
                 section.classList.add('highlight');
                 section.querySelector('.section-content').classList.add('open');
+                // Highlight matching text
+                const span = section.querySelector('span');
+                if (span) {
+                    span.innerHTML = span.textContent.replace(
+                        new RegExp(`(${searchTerms.join('|')})`, 'gi'),
+                        '<span class="highlight">$1</span>'
+                    );
+                }
             } else {
                 section.classList.remove('highlight');
                 section.querySelector('.section-content').classList.remove('open');
+                // Remove highlighting
+                const span = section.querySelector('span');
+                if (span) {
+                    span.innerHTML = span.textContent;
+                }
             }
         });
     }
@@ -65,6 +79,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event listener for search button
     searchButton.addEventListener('click', function () {
         searchList(searchBox.value);
+    });
+
+    // Event listener for Enter key in search box
+    searchBox.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            searchList(searchBox.value);
+        }
     });
 
     // Event listener for clear button
@@ -75,6 +96,11 @@ document.addEventListener('DOMContentLoaded', function () {
             section.classList.remove('highlight');
             section.querySelector('.section-content').classList.remove('open');
             section.querySelector('.toggle-button').textContent = '+';
+            // Remove highlighting
+            const span = section.querySelector('span');
+            if (span) {
+                span.innerHTML = span.textContent;
+            }
         });
         outputText.value = '';
     });
