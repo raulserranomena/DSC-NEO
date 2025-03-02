@@ -49,15 +49,30 @@ document.addEventListener('DOMContentLoaded', function () {
         const sections = document.querySelectorAll('.section');
         const searchTerms = query.toLowerCase().split(' ').filter(term => term.trim() !== '');
 
+        // Collapse all sections and remove highlighting
+        sections.forEach(section => {
+            section.querySelector('.section-content').classList.remove('open');
+            section.querySelector('.toggle-button').textContent = '+';
+            const label = section.querySelector('.section-header span');
+            if (label) {
+                label.innerHTML = label.textContent; // Reset highlighting
+            }
+        });
+
+        // Expand and highlight matching sections
         sections.forEach(section => {
             const label = section.querySelector('.section-header span');
             const content = section.textContent.toLowerCase();
             const matchesAllTerms = searchTerms.every(term => content.includes(term));
 
             if (matchesAllTerms) {
-                // Expand the section
-                section.querySelector('.section-content').classList.add('open');
-                section.querySelector('.toggle-button').textContent = '-';
+                // Expand all parent sections leading to this section
+                let parent = section.parentElement.closest('.section');
+                while (parent) {
+                    parent.querySelector('.section-content').classList.add('open');
+                    parent.querySelector('.toggle-button').textContent = '-';
+                    parent = parent.parentElement.closest('.section');
+                }
 
                 // Highlight matching text in the label
                 if (label) {
@@ -65,15 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         new RegExp(`(${searchTerms.join('|')})`, 'gi'),
                         '<span class="highlight">$1</span>'
                     );
-                }
-            } else {
-                // Collapse the section
-                section.querySelector('.section-content').classList.remove('open');
-                section.querySelector('.toggle-button').textContent = '+';
-
-                // Remove highlighting from the label
-                if (label) {
-                    label.innerHTML = label.textContent;
                 }
             }
         });
