@@ -1,27 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     <title>Installer Programming List</title>
+    <!-- Link to our CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Installer Programming List</h1>
-        <div class="search-container">
-            <input type="text" id="searchBox" placeholder="Search...">
-            <button id="searchButton">Search</button>
-            <button id="clearButton">Clear</button>
-        </div>
-        <label>
-            <input type="checkbox" id="selectParents"> Select Parents
+
+<div class="container">
+    <h1>Installer Programming List</h1>
+
+    <div class="search-container">
+        <input type="text" id="searchBox" placeholder="Search..." />
+        <button id="searchButton">Search</button>
+
+        <label style="margin-left: 1em;">
+            <input type="checkbox" id="selectWithParents" />
+            Select with Parents
         </label>
-        <div id="programmingList"></div>
-        <button id="generateButton">Generate</button>
-        <textarea id="outputText" rows="10" cols="50" readonly></textarea>
     </div>
-    <script src="data.js"></script>
-    <script src="script.js"></script>
+
+    <!-- The tree will be built inside this element -->
+    <div id="programmingList"></div>
+
+    <button id="generateButton">Generate</button>
+    <br/>
+    <textarea id="outputText" rows="10" readonly></textarea>
+</div>
+
+<!-- data.js must load first so 'installerData' is already defined -->
+<script src="data.js"></script>
+<!-- Then script.js uses installerData to build the UI -->
+<script src="script.js"></script>
+
 </body>
 </html>
