@@ -1,7 +1,7 @@
 // script.js
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Make sure "installerData" is defined in data.js, which is loaded before this script
+  // data.js defines "installerData"
   const data = installerData; 
   const programmingList = document.getElementById("programmingList");
   const searchBox = document.getElementById("searchBox");
@@ -10,25 +10,25 @@ document.addEventListener("DOMContentLoaded", function () {
   const outputText = document.getElementById("outputText");
   const selectWithParentsCb = document.getElementById("selectWithParents");
 
-  // Build the tree UI
+  // 1) Build the entire tree
   buildTree(data, programmingList);
 
-  // --- Search button ---
+  // 2) Search button
   searchButton.addEventListener("click", () => {
-    clearHighlights(); 
+    clearHighlights();
     collapseAll();
     const query = searchBox.value.trim();
     if (!query) return;
     performSearch(query);
   });
 
-  // --- Generate button ---
+  // 3) Generate button
   generateButton.addEventListener("click", () => {
     const textResult = generateIndentedList();
     outputText.value = textResult;
   });
 
-  // --- If "Select With Parents" is checked, checking a child also checks its parents ---
+  // 4) "Select With Parents" logic
   programmingList.addEventListener("change", (e) => {
     if (e.target.matches(".itemCheckbox")) {
       if (selectWithParentsCb && selectWithParentsCb.checked && e.target.checked) {
@@ -38,19 +38,19 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   /********************************************************
-   * 1. BUILD TREE
+   * buildTree(obj, container)
+   * Recursively create HTML elements from the JSON
    ********************************************************/
   function buildTree(obj, container) {
-    // Each key in the object => one "section"
     Object.keys(obj).forEach((key) => {
       const val = obj[key];
 
-      // sectionDiv wraps the header + content
+      // Outer wrapper
       const sectionDiv = document.createElement("div");
       sectionDiv.classList.add("section");
       container.appendChild(sectionDiv);
 
-      // section-header
+      // Header row
       const headerDiv = document.createElement("div");
       headerDiv.classList.add("section-header");
       sectionDiv.appendChild(headerDiv);
@@ -61,17 +61,17 @@ document.addEventListener("DOMContentLoaded", function () {
       checkbox.classList.add("itemCheckbox");
       headerDiv.appendChild(checkbox);
 
-      // Expand/collapse button
+      // Toggle button (+/-)
       const toggleBtn = document.createElement("button");
       toggleBtn.textContent = "+";
       headerDiv.appendChild(toggleBtn);
 
-      // The main label
+      // Label
       const labelSpan = document.createElement("span");
       labelSpan.textContent = key;
       headerDiv.appendChild(labelSpan);
 
-      // (i) info button
+      // Info button (i)
       const infoBtn = document.createElement("span");
       infoBtn.style.marginLeft = "8px";
       infoBtn.style.color = "blue";
@@ -79,22 +79,20 @@ document.addEventListener("DOMContentLoaded", function () {
       infoBtn.textContent = "(i)";
       infoBtn.title = "Show description (if any)";
       infoBtn.addEventListener("click", () => {
-        // For now, just a placeholder
         alert("No description available for: " + key);
       });
       headerDiv.appendChild(infoBtn);
 
-      // Content (children) container
+      // Child container
       const contentDiv = document.createElement("div");
       contentDiv.classList.add("section-content");
       sectionDiv.appendChild(contentDiv);
 
-      // If this key is an object, recurse. Otherwise it's a leaf.
+      // If 'val' is an object, recurse. Otherwise it's a leaf.
       if (typeof val === "object" && val !== null) {
-        // Build children
         buildTree(val, contentDiv);
 
-        // Toggle open/close
+        // Expand/collapse logic
         toggleBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           if (contentDiv.classList.contains("open")) {
@@ -106,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
       } else {
-        // It's a leaf, no children
+        // Leaf => no children
         toggleBtn.textContent = "-";
         toggleBtn.disabled = true;
       }
@@ -114,37 +112,35 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /********************************************************
-   * 2. SEARCH
-   *    - Collapse everything first
-   *    - Only expand the chain of parents for matched items
-   *    - Highlight only the matched text in those items
+   * performSearch(query)
+   *  - Collapses everything
+   *  - Finds items containing *all* tokens
+   *  - Highlights that label, expands its parent chain
    ********************************************************/
   function performSearch(query) {
-    // Split query into tokens
     const tokens = query.toLowerCase().split(/\s+/);
 
-    // Look at each .section-header for a label
     const allHeaders = programmingList.querySelectorAll(".section-header");
     allHeaders.forEach((headerDiv) => {
-      // The main label is the first <span> that doesn't have inline style
-      // (The infoBtn has style, so we skip it using :not([style]))
       const labelSpan = headerDiv.querySelector("span:not([style])");
       if (!labelSpan) return;
-
-      // See if label contains all tokens
       const text = labelSpan.textContent.toLowerCase();
+
+      // Check if all tokens appear
       const isMatch = tokens.every((t) => text.includes(t));
       if (isMatch) {
         // Highlight only this label
         highlightSpan(labelSpan, tokens);
-
-        // Expand the parent chain so it's visible
+        // Expand parents so it's visible
         expandParents(headerDiv);
       }
     });
   }
 
-  // Highlight the matched tokens in the given span
+  /********************************************************
+   * highlightSpan(span, tokens)
+   * Replaces each matched token with <span class="highlight">
+   ********************************************************/
   function highlightSpan(span, tokens) {
     let html = span.textContent;
     tokens.forEach((t) => {
@@ -154,15 +150,18 @@ document.addEventListener("DOMContentLoaded", function () {
     span.innerHTML = html;
   }
 
-  // Expand all parent .section-content for the given header
+  /********************************************************
+   * expandParents(headerDiv)
+   * Walk upward, adding .open to each ancestor .section-content
+   ********************************************************/
   function expandParents(headerDiv) {
     let currentSection = headerDiv.closest(".section");
-    while (currentSection && currentSection.id !== "programmingList") {
+    while (currentSection) {
       const parentContent = currentSection.parentElement;
       if (parentContent && parentContent.classList.contains("section-content")) {
         parentContent.classList.add("open");
 
-        // Also set the parent's toggle button to "-"
+        // Switch parent's toggle to "-"
         const parentHeader = parentContent.previousElementSibling;
         if (parentHeader) {
           const toggleBtn = parentHeader.querySelector("button");
@@ -175,15 +174,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Clear existing highlights
+  /********************************************************
+   * clearHighlights()
+   * Removes <span class="highlight"> wrappers
+   ********************************************************/
   function clearHighlights() {
     const highlights = programmingList.querySelectorAll(".highlight");
     highlights.forEach(h => {
-      h.outerHTML = h.textContent;
+      h.outerHTML = h.textContent; // revert to plain text
     });
   }
 
-  // Collapse everything to a "closed" state
+  /********************************************************
+   * collapseAll()
+   * Collapse every .section-content
+   ********************************************************/
   function collapseAll() {
     const allContents = programmingList.querySelectorAll(".section-content");
     allContents.forEach(div => {
@@ -196,10 +201,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /********************************************************
-   * 3. CHECK PARENTS IF A CHILD IS CHECKED
+   * selectParents(checkbox)
+   * If "select with parents" is on and a child is checked,
+   * we also check all ancestor sections
    ********************************************************/
   function selectParents(checkbox) {
-    // Climb upward looking for .section
     let parent = checkbox.closest(".section").parentElement;
     while (parent && parent.id !== "programmingList") {
       const parentSection = parent.closest(".section");
@@ -214,7 +220,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /********************************************************
-   * 4. GENERATE INDENTED LIST FOR SELECTED ITEMS
+   * generateIndentedList()
+   * Gather all checked items & produce text with indentation
    ********************************************************/
   function generateIndentedList() {
     const checkedItems = programmingList.querySelectorAll(".itemCheckbox:checked");
@@ -222,28 +229,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const itemsInfo = [];
     checkedItems.forEach((chk) => {
-      const sectionHeader = chk.parentElement;
-      // Depth = how many parent .section-content wrappers we have
+      const headerDiv = chk.parentElement;
       let depth = 0;
+
+      // Count how many .section-content ancestors we have
       let p = chk.closest(".section-content");
       while (p) {
         depth++;
         p = p.parentElement?.closest(".section-content");
       }
-      // The label is again the first <span> not styled
-      const labelSpan = sectionHeader.querySelector("span:not([style])");
+
+      // The label is typically the first <span> not styled
+      const labelSpan = headerDiv.querySelector("span:not([style])");
       const label = labelSpan ? labelSpan.textContent.trim() : "[No label]";
+
       itemsInfo.push({ depth, label });
     });
 
-    // Sort by depth (lowest to highest)
+    // Sort by ascending depth
     itemsInfo.sort((a, b) => a.depth - b.depth);
 
     let result = "";
     itemsInfo.forEach(item => {
-      // Indent: 4 spaces per level beyond 1
+      // Indent: 4 spaces per level
       result += " ".repeat((item.depth - 1) * 4) + item.label + "\n";
     });
+
     return result;
   }
 });
