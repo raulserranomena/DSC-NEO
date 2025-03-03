@@ -32,6 +32,7 @@ button {
     margin-bottom: 5px;
 }
 
+/* The row that shows a checkbox, toggle button (+/-), label, etc. */
 .section-header {
     display: flex;
     align-items: center;
@@ -51,20 +52,26 @@ button {
     cursor: pointer;
 }
 
+/* By default, children are hidden */
 .section-content {
     margin-left: 20px;
     display: none;
 }
 
+/* If .open is present, children are shown */
 .section-content.open {
     display: block;
 }
 
+/* Highlight color */
 .highlight {
     background-color: yellow;
 }
 
+/* Generate output area */
 #outputText {
     width: 100%;
     margin-top: 20px;
+    white-space: pre; /* preserve indentation */
+    font-family: monospace;
 }
