@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Find the exact matching section
+        // Find and expand the exact matching section
         let foundMatch = false;
         sections.forEach(section => {
             const label = section.querySelector('.section-header span');
