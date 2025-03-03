@@ -10,22 +10,20 @@
 <div class="container">
     <h1>Installer Programming List</h1>
 
-    <!-- Search box + button -->
     <div class="search-container">
         <input type="text" id="searchBox" placeholder="Search..." />
         <button id="searchButton">Search</button>
+        <button id="clearButton">Clear</button>
     </div>
 
-    <!-- The collapsible list -->
     <div id="programmingList"></div>
 
-    <!-- Generate button + Output textarea -->
     <button id="generateButton">Generate</button>
     <br/>
     <textarea id="outputText" rows="10" readonly></textarea>
 </div>
 
-<!-- Must load data.js first so installerData is defined -->
+<!-- data.js must load first so installerData is defined -->
 <script src="data.js"></script>
 <script src="script.js"></script>
 
