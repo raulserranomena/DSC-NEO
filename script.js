@@ -60,15 +60,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // Find and expand the exact matching section
-        let foundMatch = false;
         sections.forEach(section => {
             const label = section.querySelector('.section-header span');
             const content = section.textContent.toLowerCase();
             const matchesAllTerms = searchTerms.every(term => content.includes(term));
 
-            if (matchesAllTerms && !foundMatch) {
-                foundMatch = true;
-
+            if (matchesAllTerms) {
                 // Expand all parent sections leading to this section
                 let parent = section.parentElement.closest('.section');
                 while (parent) {
