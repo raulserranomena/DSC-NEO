@@ -1,4 +1,6 @@
-const installerProgrammingData = {
+// data.js
+
+var installerData = {
     "[*][8] -- Installer Programming Options Dir (p: 56-122)": {
       "✔= Default": "",
       "[000] Label Programming (p: 60)": {
