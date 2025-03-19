@@ -53,13 +53,15 @@ button {
     cursor: pointer;
 }
 
-/* By default, child nodes are hidden */
+/* Show father-child relationships with a dotted line on the left */
 .section-content {
     margin-left: 20px;
-    display: none;
+    padding-left: 10px;
+    border-left: 1px dotted #aaa;
+    display: none; /* collapsed by default */
 }
 
-/* .open means visible children */
+/* If .open is set, show the children */
 .section-content.open {
     display: block;
 }
@@ -69,12 +71,12 @@ button {
     background-color: yellow;
 }
 
-/* Optional style for the description text area */
+/* A hidden or toggled description box for each node */
 .descBox {
     margin-left: 30px;
     font-style: italic;
     color: #444;
-    display: none; /* hidden by default */
+    display: none; /* hidden by default, toggled by (i) */
 }
 
 /* Generate output area */
