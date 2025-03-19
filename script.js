@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchBox = document.getElementById("searchBox");
   const searchButton = document.getElementById("searchButton");
   const clearButton = document.getElementById("clearButton");
+  const collapseAllBtn = document.getElementById("collapseAllBtn");
   const generateButton = document.getElementById("generateButton");
   const outputText = document.getElementById("outputText");
 
@@ -29,6 +30,9 @@ document.addEventListener("DOMContentLoaded", function () {
     uncheckAll();
     outputText.value = "";
   });
+
+  // --- "Collapse All" button ---
+  collapseAllBtn.addEventListener("click", collapseAll);
 
   // --- Generate button ---
   generateButton.addEventListener("click", () => {
@@ -66,31 +70,27 @@ document.addEventListener("DOMContentLoaded", function () {
    * we handle it specially: hidden by default, toggled by (i).
    ********************************************************/
   function buildTree(obj, container) {
-    // For each key in 'obj', skip "Description" if it exists at this level
-    // The actual "Description" for this node is handled in the step
-    // where we create that node's children.
-
     Object.keys(obj).forEach((key) => {
       if (key === "Description") {
-        // skip: we do not build a child node for "Description"
+        // skip building a child node for the "Description" property
         return;
       }
 
       const val = obj[key];
 
-      // We'll see if 'val' is an object and has a "Description" property
+      // If 'val' is an object and has a "Description", store it
       let childDesc = "";
       if (typeof val === "object" && val !== null && "Description" in val) {
-        childDesc = val.Description;  // store it
-        delete val.Description;       // remove from child so it doesn't appear as a sub-node
+        childDesc = val.Description;
+        delete val.Description; // remove it so it won't appear as a child node
       }
 
-      // Create one "section" in the UI
+      // Create a section for this node
       const sectionDiv = document.createElement("div");
       sectionDiv.classList.add("section");
       container.appendChild(sectionDiv);
 
-      // The header row
+      // Create a header row
       const headerDiv = document.createElement("div");
       headerDiv.classList.add("section-header");
       sectionDiv.appendChild(headerDiv);
@@ -125,14 +125,14 @@ document.addEventListener("DOMContentLoaded", function () {
       contentDiv.classList.add("section-content");
       sectionDiv.appendChild(contentDiv);
 
-      // If there's a child description for *this* key, create a hidden div
+      // If there's a child description, create a hidden descBox
       let descBox = null;
       if (childDesc) {
         descBox = document.createElement("div");
         descBox.classList.add("descBox");
-        descBox.style.display = "none"; // hidden by default
+        descBox.style.display = "none";
         descBox.textContent = childDesc;
-        // Insert it after the header, before the children
+        // Insert it after the header, before the .section-content
         sectionDiv.insertBefore(descBox, contentDiv);
       }
 
@@ -152,19 +152,16 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
       } else {
-        // It's a leaf
+        // Leaf
         toggleBtn.textContent = "-";
         toggleBtn.disabled = true;
       }
 
-      // (i) button => toggle descBox if present, else alert
+      // (i) button => if there's a descBox, toggle it; otherwise do nothing
       infoBtn.addEventListener("click", (e) => {
-        e.stopPropagation(); // don't toggle the child container
+        e.stopPropagation(); // don't trigger collapse logic
         if (descBox) {
-          // Toggle
           descBox.style.display = (descBox.style.display === "none") ? "block" : "none";
-        } else {
-          alert("No description available for: " + key);
         }
       });
     });
