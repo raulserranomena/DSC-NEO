@@ -1,8 +1,7 @@
 // script.js
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Make sure data.js defines "installerData"
-  const data = installerData;
+  const data = installerData; // from data.js
   const programmingList = document.getElementById("programmingList");
   const searchBox = document.getElementById("searchBox");
   const searchButton = document.getElementById("searchButton");
@@ -10,111 +9,97 @@ document.addEventListener("DOMContentLoaded", function () {
   const generateButton = document.getElementById("generateButton");
   const outputText = document.getElementById("outputText");
 
-  // 1. Build the collapsible tree
+  // Build the entire tree
   buildTree(data, programmingList);
 
-  // 2. Search button OR pressing Enter inside the search box
+  // --- Search button & "Enter" key in search box ---
   searchButton.addEventListener("click", doSearch);
   searchBox.addEventListener("keydown", (e) => {
-    // If the user is focused in the search box and presses Enter, doSearch
     if (e.key === "Enter") {
-      e.preventDefault(); // optionally prevent any default form submit
+      e.preventDefault();
       doSearch();
     }
   });
 
-  // 3. Clear button
+  // --- Clear button ---
   clearButton.addEventListener("click", () => {
-    // Clear the search box
     searchBox.value = "";
-    // Clear highlights
     clearHighlights();
-    // Collapse everything
     collapseAll();
-    // Uncheck everything
     uncheckAll();
-    // Clear the generated text
     outputText.value = "";
   });
 
-  // 4. Generate button
+  // --- Generate button ---
   generateButton.addEventListener("click", () => {
-    const resultText = buildSelectedHierarchy(programmingList, 0);
-    outputText.value = resultText;
+    const textResult = buildSelectedHierarchy(programmingList, 0);
+    outputText.value = textResult;
   });
 
-  // 5. Whenever a child is checked, we auto-check its parents
+  // --- Checking a child auto-checks its parents ---
   programmingList.addEventListener("change", (e) => {
-    if (e.target.matches(".itemCheckbox")) {
-      if (e.target.checked) {
-        checkParents(e.target);
-      }
+    if (e.target.matches(".itemCheckbox") && e.target.checked) {
+      checkParents(e.target);
     }
   });
 
   /********************************************************
    * doSearch()
-   * Clears all checks, collapses & highlights only matched items
+   * Clears previous selections & highlights; collapses all;
+   * then highlights/expands matches.
    ********************************************************/
   function doSearch() {
-    // If the user typed nothing, do nothing
     const query = searchBox.value.trim();
     if (!query) return;
 
-    // Clear previous selections
     uncheckAll();
-
-    // Clear old highlights, collapse all
     clearHighlights();
     collapseAll();
-
-    // Perform the search
     performSearch(query);
   }
 
   /********************************************************
    * buildTree(obj, container)
-   * Recursively create the collapsible UI
-   * 1) If there's a "Description" property, store it separately
-   *    and remove it from the children so it won't appear as a node.
-   * 2) Create a hidden descBox for that text.
-   * 3) The (i) button toggles the descBox if it exists.
+   * Recursively builds the collapsible tree from 'obj'.
+   * Each "key => value" becomes a "node" with a header.
+   * If there's a "Description" property on that node,
+   * we handle it specially: hidden by default, toggled by (i).
    ********************************************************/
   function buildTree(obj, container) {
-    // For each key in the object:
+    // For each key in 'obj', skip "Description" if it exists at this level
+    // The actual "Description" for this node is handled in the step
+    // where we create that node's children.
+
     Object.keys(obj).forEach((key) => {
-      // If this key is "Description", skip making a node for it,
-      // but store the text for use below.
       if (key === "Description") {
-        // We handle "Description" in the parent's node. So just skip here.
+        // skip: we do not build a child node for "Description"
         return;
       }
 
       const val = obj[key];
 
-      // We read a possible description for *this* node, if present:
-      // That means if 'val' is an object and has "Description", it's for the child node.
-      let childDescription = "";
+      // We'll see if 'val' is an object and has a "Description" property
+      let childDesc = "";
       if (typeof val === "object" && val !== null && "Description" in val) {
-        childDescription = val.Description; // store it
-        delete val.Description;            // remove so it won't appear as a child node
+        childDesc = val.Description;  // store it
+        delete val.Description;       // remove from child so it doesn't appear as a sub-node
       }
 
-      // Create a .section
+      // Create one "section" in the UI
       const sectionDiv = document.createElement("div");
       sectionDiv.classList.add("section");
       container.appendChild(sectionDiv);
 
-      // Create a header row
+      // The header row
       const headerDiv = document.createElement("div");
       headerDiv.classList.add("section-header");
       sectionDiv.appendChild(headerDiv);
 
       // Checkbox
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.classList.add("itemCheckbox");
-      headerDiv.appendChild(checkbox);
+      const chk = document.createElement("input");
+      chk.type = "checkbox";
+      chk.classList.add("itemCheckbox");
+      headerDiv.appendChild(chk);
 
       // Toggle (+/-)
       const toggleBtn = document.createElement("button");
@@ -126,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
       labelSpan.textContent = key;
       headerDiv.appendChild(labelSpan);
 
-      // (i) info button
+      // (i) Info button
       const infoBtn = document.createElement("span");
       infoBtn.style.marginLeft = "8px";
       infoBtn.style.color = "blue";
@@ -135,30 +120,27 @@ document.addEventListener("DOMContentLoaded", function () {
       infoBtn.title = "Toggle description";
       headerDiv.appendChild(infoBtn);
 
-      // If this child has a description, create a descBox for it, initially hidden
-      let descBox = null;
-      if (childDescription) {
-        descBox = document.createElement("div");
-        descBox.classList.add("descBox");
-        descBox.style.display = "none";
-        descBox.textContent = childDescription;
-      }
-
-      // Section-content (children container)
+      // Child container
       const contentDiv = document.createElement("div");
       contentDiv.classList.add("section-content");
       sectionDiv.appendChild(contentDiv);
 
-      // If descBox exists, insert it just above the contentDiv so it appears below the header
-      if (descBox) {
-        sectionDiv.appendChild(descBox);
+      // If there's a child description for *this* key, create a hidden div
+      let descBox = null;
+      if (childDesc) {
+        descBox = document.createElement("div");
+        descBox.classList.add("descBox");
+        descBox.style.display = "none"; // hidden by default
+        descBox.textContent = childDesc;
+        // Insert it after the header, before the children
+        sectionDiv.insertBefore(descBox, contentDiv);
       }
 
-      // Build sub-tree if val is an object
+      // If val is an object, we build sub-nodes
       if (typeof val === "object" && val !== null) {
         buildTree(val, contentDiv);
 
-        // Expand/collapse logic
+        // Expand/collapse
         toggleBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           if (contentDiv.classList.contains("open")) {
@@ -170,19 +152,18 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
       } else {
-        // Leaf
+        // It's a leaf
         toggleBtn.textContent = "-";
         toggleBtn.disabled = true;
       }
 
-      // Finally, handle the (i) button to show/hide description
+      // (i) button => toggle descBox if present, else alert
       infoBtn.addEventListener("click", (e) => {
-        e.stopPropagation(); // don't trigger collapse
+        e.stopPropagation(); // don't toggle the child container
         if (descBox) {
           // Toggle
           descBox.style.display = (descBox.style.display === "none") ? "block" : "none";
         } else {
-          // No Description
           alert("No description available for: " + key);
         }
       });
@@ -191,9 +172,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /********************************************************
    * performSearch(query)
-   *  - Finds items containing *all* search words
-   *  - Highlight only those items
-   *  - Expand their parents
+   * Splits query into tokens, finds .section-header label
+   * that contain all tokens, highlights them, expands parent.
    ********************************************************/
   function performSearch(query) {
     const tokens = query.toLowerCase().split(/\s+/);
@@ -215,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /********************************************************
    * highlightSpan(span, tokens)
-   * Wraps matched tokens with <span class="highlight">
+   * Wrap matched tokens in <span class="highlight">
    ********************************************************/
   function highlightSpan(span, tokens) {
     let html = span.textContent;
@@ -228,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /********************************************************
    * expandParents(headerDiv)
-   * Climb upward and add .open to each .section-content
+   * Expands all ancestor .section-content up the chain
    ********************************************************/
   function expandParents(headerDiv) {
     let currentSection = headerDiv.closest(".section");
@@ -236,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const parentContent = currentSection.parentElement;
       if (parentContent && parentContent.classList.contains("section-content")) {
         parentContent.classList.add("open");
-        // Also set the parent's toggle to "-"
+        // Also set parent's toggle to "-"
         const parentHeader = parentContent.previousElementSibling;
         if (parentHeader) {
           const btn = parentHeader.querySelector("button");
@@ -251,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /********************************************************
    * clearHighlights()
-   * Removes all <span class="highlight"> wrappers
+   * Removes all <span class="highlight"> from label text
    ********************************************************/
   function clearHighlights() {
     const highlights = programmingList.querySelectorAll(".highlight");
@@ -262,24 +242,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /********************************************************
    * collapseAll()
-   * Collapses all .section-content
+   * Collapses every .section-content
    ********************************************************/
   function collapseAll() {
-    const allContent = programmingList.querySelectorAll(".section-content");
-    allContent.forEach(div => {
-      div.classList.remove("open");
-    });
+    const allContents = programmingList.querySelectorAll(".section-content");
+    allContents.forEach(div => div.classList.remove("open"));
     const allToggles = programmingList.querySelectorAll(".section-header button");
     allToggles.forEach(btn => {
-      if (!btn.disabled) {
-        btn.textContent = "+";
-      }
+      if (!btn.disabled) btn.textContent = "+";
     });
   }
 
   /********************************************************
    * uncheckAll()
-   * Unchecks every checkbox in the tree
+   * Unchecks all .itemCheckbox
    ********************************************************/
   function uncheckAll() {
     const checkboxes = programmingList.querySelectorAll(".itemCheckbox");
@@ -290,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /********************************************************
    * checkParents(childCheckbox)
-   * If a child is checked, also check all of its ancestors
+   * If a child is checked, also check all its ancestors
    ********************************************************/
   function checkParents(childCheckbox) {
     let parent = childCheckbox.closest(".section").parentElement;
@@ -308,32 +284,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /********************************************************
    * buildSelectedHierarchy(container, depth)
-   * Recursively scan each .section. If the .section’s
-   * checkbox is checked OR any child is included,
-   * we add its label (properly indented) to result,
-   * then recurse its children.
+   * Recursively build an indented list of selected items
    ********************************************************/
   function buildSelectedHierarchy(container, depth) {
     let result = "";
-    // Only look at .section elements that are direct children
     const sections = container.querySelectorAll(":scope > .section");
-
     sections.forEach(section => {
       const header = section.querySelector(":scope > .section-header");
       const content = section.querySelector(":scope > .section-content");
       const checkbox = header.querySelector(".itemCheckbox");
 
       // Recurse children
-      const childrenText = buildSelectedHierarchy(content, depth + 1);
+      const childLines = buildSelectedHierarchy(content, depth + 1);
 
-      // If this node is checked or the children have lines
-      if (checkbox.checked || childrenText.trim().length > 0) {
+      if (checkbox.checked || childLines.trim().length > 0) {
         const labelSpan = header.querySelector("span:not([style])");
         const label = labelSpan ? labelSpan.textContent.trim() : "[No label]";
-
-        // Indent 4 spaces per level
         result += " ".repeat(depth * 4) + label + "\n";
-        result += childrenText;
+        result += childLines;
       }
     });
     return result;
