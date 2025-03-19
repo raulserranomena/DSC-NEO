@@ -3,7 +3,9 @@
 var installerData = {
     "[*][8] -- Installer Programming Options Dir (p: 56-122)": {
       "✔= Default": "",
+      "Description": "Test",
       "[000] Label Programming (p: 60)": {
+        "Description": "Test",
         "000 Label Programming (p: 60)": {
           "000 -- Language Selection (01)": "",
           "001 -- Zone Labels": {
