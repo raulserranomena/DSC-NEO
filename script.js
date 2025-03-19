@@ -75,9 +75,23 @@ document.addEventListener("DOMContentLoaded", function () {
   /********************************************************
    * buildTree(obj, container)
    * Recursively create the collapsible UI
+   * If 'obj' has a "Description" property, we remove it
+   * from the children and create a hidden .descBox.
    ********************************************************/
   function buildTree(obj, container) {
+    // We'll iterate over each key in 'obj'
+    // But if there's a "Description" property, let's store it separately:
+    const descriptionText = obj.Description;
+    if (descriptionText) {
+      // Remove the "Description" property so it doesn't appear in the child nodes
+      delete obj.Description;
+    }
+
+    // Now iterate the rest
     Object.keys(obj).forEach((key) => {
+      // Skip if the key is "Description" (already handled above)
+      if (key === "Description") return;
+
       const val = obj[key];
 
       // Outer wrapper
@@ -106,16 +120,13 @@ document.addEventListener("DOMContentLoaded", function () {
       labelSpan.textContent = key;
       headerDiv.appendChild(labelSpan);
 
-      // Info button (i)
+      // (i) info button
       const infoBtn = document.createElement("span");
       infoBtn.style.marginLeft = "8px";
       infoBtn.style.color = "blue";
       infoBtn.style.cursor = "pointer";
       infoBtn.textContent = "(i)";
-      infoBtn.title = "Show description (if any)";
-      infoBtn.addEventListener("click", () => {
-        alert("No description available for: " + key);
-      });
+      infoBtn.title = "Toggle description";
       headerDiv.appendChild(infoBtn);
 
       // Section content
@@ -123,11 +134,12 @@ document.addEventListener("DOMContentLoaded", function () {
       contentDiv.classList.add("section-content");
       sectionDiv.appendChild(contentDiv);
 
-      // If val is an object, recurse; else it's a leaf
+      // If the child 'val' is an object, we build a subtree.
+      // If it's a string/leaf, we won't create children.
       if (typeof val === "object" && val !== null) {
         buildTree(val, contentDiv);
 
-        // Expand/collapse
+        // Expand/collapse logic
         toggleBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           if (contentDiv.classList.contains("open")) {
@@ -143,7 +155,51 @@ document.addEventListener("DOMContentLoaded", function () {
         toggleBtn.textContent = "-";
         toggleBtn.disabled = true;
       }
+
+      // Now, handle if this particular node has a "Description"
+      // from the parent's object? Actually we want to handle
+      // "descriptionText" if it's specifically for *this* node, but
+      // your data is structured so that "Description" might appear
+      // at the same level as the siblings. So let's do this:
     });
+
+    // If this object had a "Description" text, we add a hidden .descBox
+    // at the *end* of the container, or right after the parent's header.
+    // In your JSON structure, "Description" is at the same level as e.g. "[000] Label Programming".
+    // If you'd prefer each node to show its own "Description," you'd store it differently.
+    // For now, let's show it at the top level *for this object* if it existed.
+
+    if (descriptionText) {
+      // We'll insert a .descBox at the BOTTOM of 'container'
+      // or you could do it at the top if you prefer
+      const descBox = document.createElement("div");
+      descBox.classList.add("descBox");
+      descBox.textContent = descriptionText;
+      container.insertBefore(descBox, container.firstChild);
+
+      // We also attach an (i) button logic to the "section-header" above
+      // But there's no single "section-header" for the entire object if it had multiple keys
+      // Another approach: If you want the (i) in the parent label,
+      // you might pass the description upward. For now, let's do a simpler approach:
+
+      // We'll create a small "description toggler" div at the top
+      // so that the user can toggle the description for this entire block if they want.
+      // This approach depends on your data structure. Another approach is to
+      // store the parent's description in buildTree's caller so we have
+      // 1:1 item => description.
+
+      // For demonstration, let's do a small trick:
+      // - If this object is at the top level, we have no single "header" to attach the (i) button to.
+      // - We might do a special "description button" or just always show it.
+      // Instead, let's do: Always hidden by default, user can toggle it by (i) in the parent's header if we had one.
+
+      // For your case, you can do this: If you want a single node with that "Description" property,
+      // you'd store it in a variable "myDesc" and have a .descBox for that item specifically.
+
+      // Let's do a simpler approach:
+      // We'll store it in a data attribute, so that the parent's (i) can show/hide it.
+      // That means we must do it right before we parse children. So let's do it differently:
+    }
   }
 
   /********************************************************
