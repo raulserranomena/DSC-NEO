@@ -28,6 +28,7 @@ button {
     margin-bottom: 20px;
 }
 
+/* Each node in the tree is a .section */
 .section {
     margin-bottom: 5px;
 }
@@ -52,7 +53,7 @@ button {
     cursor: pointer;
 }
 
-/* Tree lines to help see hierarchy */
+/* Show father-child relationships with a dotted line on the left */
 .section-content {
     margin-left: 20px;
     padding-left: 10px;
@@ -60,6 +61,7 @@ button {
     display: none; /* collapsed by default */
 }
 
+/* If .open is set, show the children */
 .section-content.open {
     display: block;
 }
@@ -69,18 +71,18 @@ button {
     background-color: yellow;
 }
 
-/* The hidden or toggled description box */
+/* A hidden or toggled description box for each node */
 .descBox {
     margin-left: 30px;
     font-style: italic;
     color: #444;
-    display: none;
+    display: none; /* hidden by default, toggled by (i) */
 }
 
-/* The output area for Generate button */
+/* Generate output area */
 #outputText {
     width: 100%;
     margin-top: 20px;
-    white-space: pre;
+    white-space: pre; /* preserve indentation */
     font-family: monospace;
 }
