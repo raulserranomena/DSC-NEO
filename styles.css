@@ -69,6 +69,14 @@ button {
     background-color: yellow;
 }
 
+/* Optional style for the description text area */
+.descBox {
+    margin-left: 30px;
+    font-style: italic;
+    color: #444;
+    display: none; /* hidden by default */
+}
+
 /* Generate output area */
 #outputText {
     width: 100%;
