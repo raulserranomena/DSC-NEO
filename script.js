@@ -1,6 +1,6 @@
 // script.js
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
   const data = installerData; // from data.js
   const programmingList = document.getElementById("programmingList");
   const searchBox = document.getElementById("searchBox");
@@ -10,10 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const generateButton = document.getElementById("generateButton");
   const outputText = document.getElementById("outputText");
 
-  // 1. Build the tree
+  // Build the entire tree
   buildTree(data, programmingList);
 
-  // 2. Search & Enter key
+  // --- Search button & "Enter" key in search box ---
   searchButton.addEventListener("click", doSearch);
   searchBox.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 3. Clear
+  // --- Clear button ---
   clearButton.addEventListener("click", () => {
     searchBox.value = "";
     clearHighlights();
@@ -31,16 +31,16 @@ document.addEventListener("DOMContentLoaded", () => {
     outputText.value = "";
   });
 
-  // 4. Collapse All
+  // --- "Collapse All" button ---
   collapseAllBtn.addEventListener("click", collapseAll);
 
-  // 5. Generate
+  // --- Generate button ---
   generateButton.addEventListener("click", () => {
-    const resultText = buildSelectedHierarchy(programmingList, 0);
-    outputText.value = resultText;
+    const textResult = buildSelectedHierarchy(programmingList, 0);
+    outputText.value = textResult;
   });
 
-  // 6. Check parents on child check
+  // --- Checking a child auto-checks its parents ---
   programmingList.addEventListener("change", (e) => {
     if (e.target.matches(".itemCheckbox") && e.target.checked) {
       checkParents(e.target);
@@ -49,10 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /********************************************************
    * doSearch()
+   * Clears previous selections & highlights; collapses all;
+   * then highlights/expands matches.
    ********************************************************/
   function doSearch() {
     const query = searchBox.value.trim();
     if (!query) return;
+
     uncheckAll();
     clearHighlights();
     collapseAll();
@@ -61,40 +64,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /********************************************************
    * buildTree(obj, container)
+   * Recursively builds the collapsible tree from 'obj'.
+   * Each "key => value" becomes a "node" with a header.
+   * If there's a "Description" property on that node,
+   * we handle it specially: hidden by default, toggled by (i).
    ********************************************************/
   function buildTree(obj, container) {
     Object.keys(obj).forEach((key) => {
-      if (key === "Description") return; // skip child node for "Description"
-
-      const val = obj[key];
-      let childDesc = "";
-
-      if (typeof val === "object" && val !== null && "Description" in val) {
-        childDesc = val.Description;
-        delete val.Description;
+      if (key === "Description") {
+        // skip building a child node for the "Description" property
+        return;
       }
 
+      const val = obj[key];
+
+      // If 'val' is an object and has a "Description", store it
+      let childDesc = "";
+      if (typeof val === "object" && val !== null && "Description" in val) {
+        childDesc = val.Description;
+        delete val.Description; // remove it so it won't appear as a child node
+      }
+
+      // Create a section for this node
       const sectionDiv = document.createElement("div");
       sectionDiv.classList.add("section");
       container.appendChild(sectionDiv);
 
+      // Create a header row
       const headerDiv = document.createElement("div");
       headerDiv.classList.add("section-header");
       sectionDiv.appendChild(headerDiv);
 
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.classList.add("itemCheckbox");
-      headerDiv.appendChild(checkbox);
+      // Checkbox
+      const chk = document.createElement("input");
+      chk.type = "checkbox";
+      chk.classList.add("itemCheckbox");
+      headerDiv.appendChild(chk);
 
+      // Toggle (+/-)
       const toggleBtn = document.createElement("button");
       toggleBtn.textContent = "+";
       headerDiv.appendChild(toggleBtn);
 
+      // Label
       const labelSpan = document.createElement("span");
       labelSpan.textContent = key;
       headerDiv.appendChild(labelSpan);
 
+      // (i) Info button
       const infoBtn = document.createElement("span");
       infoBtn.style.marginLeft = "8px";
       infoBtn.style.color = "blue";
@@ -103,21 +120,27 @@ document.addEventListener("DOMContentLoaded", () => {
       infoBtn.title = "Toggle description";
       headerDiv.appendChild(infoBtn);
 
+      // Child container
       const contentDiv = document.createElement("div");
       contentDiv.classList.add("section-content");
       sectionDiv.appendChild(contentDiv);
 
+      // If there's a child description, create a hidden descBox
       let descBox = null;
       if (childDesc) {
         descBox = document.createElement("div");
         descBox.classList.add("descBox");
         descBox.style.display = "none";
         descBox.textContent = childDesc;
+        // Insert it after the header, before the .section-content
         sectionDiv.insertBefore(descBox, contentDiv);
       }
 
+      // If val is an object, we build sub-nodes
       if (typeof val === "object" && val !== null) {
         buildTree(val, contentDiv);
+
+        // Expand/collapse
         toggleBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           if (contentDiv.classList.contains("open")) {
@@ -129,14 +152,16 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       } else {
+        // Leaf
         toggleBtn.textContent = "-";
         toggleBtn.disabled = true;
       }
 
+      // (i) button => if there's a descBox, toggle it; otherwise do nothing
       infoBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
+        e.stopPropagation(); // don't trigger collapse logic
         if (descBox) {
-          descBox.style.display = descBox.style.display === "none" ? "block" : "none";
+          descBox.style.display = (descBox.style.display === "none") ? "block" : "none";
         }
       });
     });
@@ -144,6 +169,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /********************************************************
    * performSearch(query)
+   * Splits query into tokens, finds .section-header label
+   * that contain all tokens, highlights them, expands parent.
    ********************************************************/
   function performSearch(query) {
     const tokens = query.toLowerCase().split(/\s+/);
@@ -154,6 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!labelSpan) return;
       const text = labelSpan.textContent.toLowerCase();
 
+      // Must contain all tokens
       const isMatch = tokens.every(t => text.includes(t));
       if (isMatch) {
         highlightSpan(labelSpan, tokens);
@@ -164,37 +192,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /********************************************************
    * highlightSpan(span, tokens)
+   * Wrap matched tokens in <span class="highlight">
    ********************************************************/
   function highlightSpan(span, tokens) {
     let html = span.textContent;
-    tokens.forEach(t => {
-      const re = new RegExp(t, "gi");
-      html = html.replace(re, match => `<span class="highlight">${match}</span>`);
+    tokens.forEach((t) => {
+      const regex = new RegExp(t, "gi");
+      html = html.replace(regex, (m) => `<span class="highlight">${m}</span>`);
     });
     span.innerHTML = html;
   }
 
   /********************************************************
    * expandParents(headerDiv)
+   * Expands all ancestor .section-content up the chain
    ********************************************************/
   function expandParents(headerDiv) {
-    let section = headerDiv.closest(".section");
-    while (section) {
-      const parentContent = section.parentElement;
+    let currentSection = headerDiv.closest(".section");
+    while (currentSection) {
+      const parentContent = currentSection.parentElement;
       if (parentContent && parentContent.classList.contains("section-content")) {
         parentContent.classList.add("open");
+        // Also set parent's toggle to "-"
         const parentHeader = parentContent.previousElementSibling;
         if (parentHeader) {
           const btn = parentHeader.querySelector("button");
-          if (btn && !btn.disabled) btn.textContent = "-";
+          if (btn && !btn.disabled) {
+            btn.textContent = "-";
+          }
         }
       }
-      section = parentContent?.closest(".section");
+      currentSection = parentContent?.closest(".section");
     }
   }
 
   /********************************************************
    * clearHighlights()
+   * Removes all <span class="highlight"> from label text
    ********************************************************/
   function clearHighlights() {
     const highlights = programmingList.querySelectorAll(".highlight");
@@ -205,11 +239,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /********************************************************
    * collapseAll()
+   * Collapses every .section-content
    ********************************************************/
   function collapseAll() {
     const allContents = programmingList.querySelectorAll(".section-content");
     allContents.forEach(div => div.classList.remove("open"));
-
     const allToggles = programmingList.querySelectorAll(".section-header button");
     allToggles.forEach(btn => {
       if (!btn.disabled) btn.textContent = "+";
@@ -218,14 +252,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /********************************************************
    * uncheckAll()
+   * Unchecks all .itemCheckbox
    ********************************************************/
   function uncheckAll() {
     const checkboxes = programmingList.querySelectorAll(".itemCheckbox");
-    checkboxes.forEach(ch => ch.checked = false);
+    checkboxes.forEach(chk => {
+      chk.checked = false;
+    });
   }
 
   /********************************************************
    * checkParents(childCheckbox)
+   * If a child is checked, also check all its ancestors
    ********************************************************/
   function checkParents(childCheckbox) {
     let parent = childCheckbox.closest(".section").parentElement;
@@ -243,16 +281,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /********************************************************
    * buildSelectedHierarchy(container, depth)
+   * Recursively build an indented list of selected items
    ********************************************************/
   function buildSelectedHierarchy(container, depth) {
     let result = "";
     const sections = container.querySelectorAll(":scope > .section");
-
     sections.forEach(section => {
       const header = section.querySelector(":scope > .section-header");
       const content = section.querySelector(":scope > .section-content");
       const checkbox = header.querySelector(".itemCheckbox");
 
+      // Recurse children
       const childLines = buildSelectedHierarchy(content, depth + 1);
 
       if (checkbox.checked || childLines.trim().length > 0) {
