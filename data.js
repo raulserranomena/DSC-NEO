@@ -111,169 +111,173 @@ var installerData = {
         "Description": "Assign each zone a type (delay, instant, fire, etc.).",
         "001-128 Zone Definitions / Types (000)": {
           "Description": "List of codes for zone behavior.",
-          "000 -- Null Zone": {"Description": "Assign to unused zones."},
+          "000 -- Null Zone": {
+            "Description": "DEFINITION – [000], NULL ZONE\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nWhen violated, a null zone will not be displayed on the keypad or generate an alarm\n\nAPPLICATION:\nCommonly used when required to disable a zone"
+          },
           "001 -- Delay 1": {
-            "Description": "Standard entry delay zone for main doors."
+            "Description": "DEFINITION – [001], DELAY 1\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nIf violated when the system is armed, entry delay will begin (Entry Delay 1). If a valid access code is entered before entry delay expires, no alarm is generated. If a valid access code is not entered before entry delay expires, an alarm is generated.\n\nAPPLICATION:\nUsed for zones that are used as an entrance point to a location when the system is armed. For example, a front door to a house."
           },
           "002 -- Delay 2": {
-            "Description": "Secondary entry delay for another door."
+            "Description": "DEFINITION – [002], DELAY 2\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nIf violated when the system is armed, entry delay will begin (Entry Delay 2). If a valid access code is entered before entry delay expires, no alarm is generated. If a valid access code is not entered before entry delay expires, an alarm is generated.\n\nAPPLICATION:\nUsed for zones that are an entrance point to a location when the system is armed. For example, another door. The entry delay 2 timer can be programmed differently from entry delay 1."
           },
           "003 -- Instant": {
-            "Description": "Triggers immediate alarm upon opening."
+            "Description": "DEFINITION – [003], INSTANT\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nIf violated when the system is armed, an alarm is instantly generated.\n\nAPPLICATION:\nCommonly used for perimeter zones that require immediate alarm upon violation, such as windows or secondary doors not used for entry."
           },
           "004 -- Interior": {
-            "Description": "Interior follower zone, bypassed if no entry door is tripped first."
+            "Description": "DEFINITION – [004], INTERIOR\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nIf violated when the system is armed, operation varies depending on whether a delay type was violated first:\n  a) If a Delay type zone was violated first: entry delay begins, allowing user to disarm.\n  b) If no Delay zone was violated first: alarm is generated instantly.\n\nAPPLICATION:\nCommonly used for motion detectors inside the premises. It allows a valid entry path if coming in via a delay door, but triggers immediate alarm if someone enters improperly (e.g., through a window)."
           },
           "005 -- Interior Stay/Away": {
-            "Description": "Bypassed in Stay mode, active in Away mode."
+            "Description": "DEFINITION – [005], INTERIOR STAY/AWAY\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nWhen armed in Stay mode, this zone will be automatically bypassed; violations are ignored. When armed in Away mode, it operates as an Interior zone (same as [004]).\n\nAPPLICATION:\nUsed for motion detectors inside a home so that if the system is armed in Stay mode, these motion zones are bypassed, allowing occupants to move around indoors. In Away mode, they become active interior zones."
           },
           "006 -- Delay Stay/Away": {
-            "Description": "Delayed zone that can also be bypassed in Stay mode."
+            "Description": "DEFINITION – [006], DELAY STAY/AWAY\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nDiffers depending on Stay or Away mode:\n  a) Stay Mode: zone automatically bypassed; no alarms.\n  b) Away Mode: zone behaves like Delay 1.\n\nAPPLICATION:\nOften used for an interior motion that must be bypassed in Stay mode, but if armed Away, it has a delay entrance (like [001])"
           },
           "007 -- Delayed 24-Hour Fire": {
-            "Description": "24-hour fire zone with short alarm delay."
+            "Description": "DEFINITION – [007], DELAYED 24-HR FIRE\n\nTYPE:\n24-HR\n\nOPERATION:\nWhen violated, siren output activates (pulsed), and a 30 second timer begins:\n  • If no button is pressed on the keypad in that 30 seconds and the zone remains in alarm at the end, the alarm is logged and transmitted.\n  • If the zone is restored before 30s expires, siren stops and alarm is not sent.\n  • If any keypad button is pressed within the 30s, a 90s timer starts and the siren stops, ignoring the zone. After 90s, if the zone is still violated, the 30s sequence restarts.\n\nAPPLICATION:\nUsed in areas like a kitchen where false smoke detections can occur. Hardwired zones for this type are forced to single EOL resistor wiring."
           },
           "008 -- Standard 24-Hour Fire": {
-            "Description": "24-hour fire zone with immediate alarm."
+            "Description": "DEFINITION – [008], STANDARD 24-HR FIRE\n\nTYPE:\n24-HR\n\nOPERATION:\nWhen violated, siren output is pulsed. The alarm is instantly logged and transmitted.\n\nAPPLICATION:\nUsed where an immediate fire alarm is required. Hardwired zones for this type use single EOL resistor wiring by default."
           },
           "009 -- Instant Stay/Away": {
-            "Description": "Instant alarm in both stay and away modes."
+            "Description": "DEFINITION – [009], INSTANT STAY/AWAY\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nIf armed Stay, the zone is bypassed automatically. If armed Away, the zone operates as an Instant zone ([003]).\n\nAPPLICATION:\nCommonly used for motion detectors that remain bypassed in Stay but instantly alarm in Away mode."
           },
           "010 -- Interior Delay": {
-            "Description": "Interior zone that uses an entry delay if triggered after an entry door."
+            "Description": "DEFINITION – [010], INTERIOR DELAY\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nActs as an Interior zone if armed Away; acts as Delay 1 if armed Stay.\n\nAPPLICATION:\nA zone that remains active in both Stay and Away, but with different behaviors in each arming mode."
           },
           "011 -- Day Zone": {
-            "Description": "Causes trouble if opened while disarmed; alarm if armed."
+            "Description": "DEFINITION – [011], DAY ZONE\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nBehavior differs based on armed or disarmed:\n  • Armed: Triggers instant alarm.\n  • Disarmed: Keypad sounds continuously for bell cutoff time if violated. No alarm is generated.\n\nAPPLICATION:\nUsed where a violation should generate a steady keypad alert if disarmed, but an immediate alarm if armed. For instance, a pool door or liquor cabinet door."
           },
           "012 -- Night Zone": {
-            "Description": "Instantly armed at night mode; bypassed in stay mode."
+            "Description": "DEFINITION – [012], NIGHT ZONE\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nAuto-bypassed if armed Stay. If [*][1] Reactivate Stay/Away is performed, Night zones do NOT become active. If system is armed Away from disarmed, these zones behave like Interior zones.\n\nAPPLICATION:\nOften used for motion detectors on a second floor. User arms Stay and reactivates certain Stay/Away zones for first-floor coverage, leaving Night zones bypassed upstairs so they can move around freely."
           },
           "016 -- Final Door Set": {
-            "Description": "Ends exit delay upon closing this door."
+            "Description": "DEFINITION – [016], FINAL DOOR SET\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nInfinite exit delay begins upon arming in Away with keypad or keyfob. The system completes arming only after this zone is opened and closed (violated/restored). If violated when armed, it triggers entry delay.\n\nAPPLICATION:\nUsed as the main entry/exit door when a longer or indefinite exit time is required. Arming finalizes only after crossing this door."
           },
           "017 -- 24-Hour Burglary": {
-            "Description": "Always active burglary zone."
+            "Description": "DEFINITION – [017], 24-HR BURGLARY\n\nTYPE:\n24-HR\n\nOPERATION:\nIf violated, the zone triggers a burglary alarm (logged and transmitted) whether the system is armed or disarmed.\n\nAPPLICATION:\nUsed whenever a continuous burglary protection is needed, e.g., a valuables cage or emergency exit that must always report an alarm."
           },
           "018 -- 24-Hour Bell/Buzzer": {
-            "Description": "Always active, triggers steady or pulsed buzzer."
+            "Description": "DEFINITION – [018], 24-HR BELL/BUZZER\n\nTYPE:\n24-HR\n\nOPERATION:\nViolations trigger alarm, armed or disarmed. If disarmed, only keypad buzzer sounds; if armed, bell also activates.\n\nAPPLICATION:\nUsed for around-the-clock protection but with a buzzer when disarmed instead of a full siren."
           },
           "023 -- 24-Hour Supervisory": {
-            "Description": "Non-alarm supervisory zone, active 24 hours."
+            "Description": "DEFINITION – [023], 24-HR SUPERVISORY\n\nTYPE:\n24-HR\n\nOPERATION:\nNormally open contacts, always single EOL. Triggering logs and transmits a silent alarm, no audible output.\n\nAPPLICATION:\nFor supervision of critical circuits or devices, generating a silent alarm at any time."
           },
           "024 -- 24-Hour Supervisory Buzzer": {
-            "Description": "Supervisory with audible buzzer on events."
+            "Description": "DEFINITION – [024], 24HR SUPERVISORY BUZZER\n\nTYPE:\n24-HR\n\nOPERATION:\nViolations log/transmit an alarm. Keypad buzzer continues until a valid code is entered.\n\nAPPLICATION:\nRequires local keypad alert for a supervisory condition, but no external siren."
           },
           "025 -- Auto Verify Fire": {
-            "Description": "Auto-verification mechanism for fire zones."
+            "Description": "DEFINITION – [025], AUTO VERIFY FIRE\n\nTYPE:\n24-HR\n\nOPERATION:\nNo immediate bell output. After a 30s delay, if another fire trigger occurs within 60s, the alarm is instantly generated. (Wireless uses a slightly different 40s initial / 30s second trigger logic.)\n\nAPPLICATION:\nUsed where smoke detection is critical but false alarms (e.g. from cooking) are likely. Forces a short verification before full alarm. Hardwired zones forced to single EOL."
           },
           "027 -- Fire Supervisory": {
-            "Description": "Supervisory for fire system (valve tamper, etc.)."
+            "Description": "DEFINITION – [027], FIRE SUPERVISORY\n\nTYPE:\n24-HR\n\nOPERATION:\nKeypad buzzer until acknowledged. Logs, transmits if violated armed or disarmed. Hardwired zones forced single EOL.\n\nAPPLICATION:\nCommonly used to supervise a secondary fire panel or a sprinkler system tamper."
           },
           "040 -- 24-Hour Gas": {
-            "Description": "Monitors gas detectors at all times."
+            "Description": "DEFINITION – [040], 24-HR GAS\n\nTYPE:\n24-HR\n\nOPERATION:\nTripping the zone triggers an alarm 24/7, logs and transmits, plus siren if armed.\n\nAPPLICATION:\nGas detector input, can be NC or NO, always active."
           },
           "041 -- 24-Hour CO": {
-            "Description": "Monitors carbon monoxide detectors 24/7."
+            "Description": "DEFINITION – [041], 24-HR CO (CARBON MONOXIDE)\n\nTYPE:\n24-HR\n\nOPERATION:\nTriggers a CO-specific pulsed bell (5s pulses, extends to 60s pause after 4 minutes). Increase bell timeout to at least 5min. Logs and transmits.\n\nAPPLICATION:\nFor a CO detector that must always generate alarm. Hardwired forced single EOL resistor."
           },
           "042 -- 24-Hour Holdup": {
-            "Description": "Holdup/panic zone, always active."
+            "Description": "DEFINITION – [042], 24-HR HOLDUP\n\nTYPE:\n24-HR\n\nOPERATION:\nSilent alarm if violated. Always logs/transmits, no siren.\n\nAPPLICATION:\nFor hold-up or robbery panic buttons or zones, even if system is disarmed."
           },
-          "043 -- 24-Hour Panic": {"Description": "Panic zone, always armed."},
+          "043 -- 24-Hour Panic": {
+            "Description": "DEFINITION – [043], 24-HR PANIC\n\nTYPE:\n24-HR\n\nOPERATION:\nViolations cause an audible alarm (bell/siren) armed or disarmed.\n\nAPPLICATION:\nFor audible panic or distress buttons."
+          },
           "045 -- 24-Hour Heat": {
-            "Description": "Monitors high heat sensors (fire)."
+            "Description": "DEFINITION – [045], 24-HR HEAT\n\nTYPE:\n24-HR\n\nOPERATION:\nTriggers an audible alarm, logs, and transmits if violated at any time.\n\nAPPLICATION:\nFor heat detectors requiring immediate alarm."
           },
-          "046 -- 24-Hour Medical*": {
-            "Description": "Dedicated for medical emergencies."
+          "046 -- 24-HR Medical*": {
+            "Description": "DEFINITION – [046], 24-HR MEDICAL\n\nTYPE:\n24-HR\n\nOPERATION:\nGenerates an audible alarm if violated, logs/transmits.\n\nAPPLICATION:\nFor medical or personal emergency pushbuttons, always active."
           },
-          "047 -- 24-Hour Emergency": {
-            "Description": "General 24-hour emergency zone."
+          "047 -- 24-HR Emergency": {
+            "Description": "DEFINITION – [047], 24-HR EMERGENCY\n\nTYPE:\n24-HR\n\nOPERATION:\nViolations cause an audible alarm, logs, transmits.\n\nAPPLICATION:\nGeneral emergency zone, always active. Monitoring station reaction can vary."
           },
-          "048 -- 24-Hour Sprinkler": {
-            "Description": "Always active sprinkler supervisory zone."
+          "048 -- 24-HR Sprinkler": {
+            "Description": "DEFINITION – [048], 24-HR SPRINKLER\n\nTYPE:\n24-HR\n\nOPERATION:\nTriggers audible alarm if violated, logs and transmits.\n\nAPPLICATION:\nFor monitoring a sprinkler system flow or tamper, always active."
           },
-          "049 -- 24-Hour Flood": {
-            "Description": "Monitors flood/water sensors at all times."
+          "049 -- 24-HR Flood": {
+            "Description": "DEFINITION – [049], 24-HR FLOOD\n\nTYPE:\n24-HR\n\nOPERATION:\nTriggers audible alarm if violated, logs and transmits.\n\nAPPLICATION:\nFor normally closed flood sensors, always active."
           },
           "051 -- 24-Hour Latching Tamper": {
-            "Description": "Latch tamper, requires manual reset."
+            "Description": "DEFINITION – [051], 24HR LATCHING TAMPER\n\nTYPE:\n24-HR\n\nOPERATION:\nTriggers audible alarm and reporting. System remains unready until the installer enters and exits programming.\n\nAPPLICATION:\nOften used to guard the control panel cabinet. Once violated, a reset is required to restore normal operation."
           },
           "052 -- 24-Hour Non-Alarm": {
-            "Description": "Logs events but no audible alarm."
+            "Description": "DEFINITION – [052], 24HR NON-ALARM\n\nTYPE:\n24-HR\n\nOPERATION:\nNo siren or alarm is generated if violated. Can be used for door chime or temperature monitoring. Logs events.\n\nAPPLICATION:\nProvides annunciation without impacting system arming or causing alarms. Ideal for a zone that needs no security response."
           },
           "056 -- 24-Hour High Temperature": {
-            "Description": "Monitors high temperature conditions."
+            "Description": "DEFINITION – [056], 24-HR HIGH TEMPERATURE\n\nTYPE:\n24-HR\n\nOPERATION:\nIf threshold is exceeded, triggers an audible alarm, logs, and transmits. Always active.\n\nAPPLICATION:\nUsed with high-temperature sensors. Wireless sensors can define the high threshold in their zone programming."
           },
           "057 -- 24 Hour Low Temperature": {
-            "Description": "Monitors low temperature conditions."
+            "Description": "DEFINITION – [057], 24-HR LOW TEMPERATURE\n\nTYPE:\n24-HR\n\nOPERATION:\nTriggers an audible alarm, logs, and transmits if the temperature is below threshold.\n\nAPPLICATION:\nUsed with low-temp detectors to alert potential freeze conditions. Wireless thresholds set in zone programming."
           },
           "060 -- 24-Hour Non-Latching Tamper": {
-            "Description": "Tamper that resets automatically."
+            "Description": "DEFINITION – [060], 24HR NON-LATCHING TAMPER\n\nTYPE:\n24-HR\n\nOPERATION:\nLogs and transmits a tamper if violated. Once tamper is restored, system can arm.\n\nAPPLICATION:\nMonitors a tamper switch in the panel or device. Does not require installer reset like the latching type."
           },
           "066 -- Momentary Keyswitch Arm": {
-            "Description": "Arms on momentary switch closure."
+            "Description": "DEFINITION – [066], MOMENTARY KEYSWITCH ARM\n\nTYPE:\nArm/Disarm Input\n\nOPERATION:\nA momentary violation toggles the system between armed and disarmed. Not used for intrusion detection.\n\nAPPLICATION:\nUsed for a keyswitch or external contact to arm/disarm with a short closure."
           },
           "067 -- Maintained Keyswitch Arm": {
-            "Description": "Remains armed as long as switch is closed."
+            "Description": "DEFINITION – [067], MAINTAINED KEYSWITCH ARM\n\nTYPE:\nArm/Disarm Input\n\nOPERATION:\nZone is violated to arm the system, and restoring it disarms. Not used for detection.\n\nAPPLICATION:\nAlternate arming/disarming method using a maintained switch or contact."
           },
           "068 -- Momentary Keyswitch Disarm": {
-            "Description": "Disarms on momentary switch closure."
+            "Description": "DEFINITION – [068], MOMENTARY KEYSWITCH DISARM\n\nTYPE:\nArm/Disarm Input\n\nOPERATION:\nEach brief violation in an armed state disarms that partition.\n\nAPPLICATION:\nUsed when only a disarm function is required via an external switch."
           },
-          "069 -- Maintained Keywsitch Disarm": {
-            "Description": "Disarmed as long as switch is kept closed."
+          "069 -- Maintained Keyswitch Disarm": {
+            "Description": "DEFINITION – [069], MAINTAINED KEYSWITCH DISARM\n\nTYPE:\nArm/Disarm Input\n\nOPERATION:\nWhen zone is held violated in an armed system, it disarms. Restoring it arms again if configured.\n\nAPPLICATION:\nAnother alternate method to disarm using a maintained contact."
           },
           "071 -- Doorbell Zone": {
-            "Description": "Chimes like a doorbell when opened."
+            "Description": "DEFINITION – [071], DOORBELL ZONE\n\nTYPE:\nNon-alarm\n\nOPERATION:\nActivates only the door chime, never an alarm.\n\nAPPLICATION:\nUse for a doorbell or similar device that triggers a chime but no security response."
           },
           "072 -- Push to Set (Non CP-01 panels only)": {
-            "Description": "Push-to-set arming method used in some regions."
+            "Description": "DEFINITION – [072], PUSH TO SET\n\nTYPE:\nNon 24-HR\n\nOPERATION:\nSimilar to [016] Final Door Set except no alarm occurs. Infinite exit delay until this zone is violated and restored, completing arming. No alarm if triggered while armed.\n\nAPPLICATION:\nOften used in regions requiring push-to-set. Extends exit delay indefinitely until user confirms arming by operating this zone."
           }
         }
       },
       "002 -- Zone Attributes (p: 67)": {
-        "Description": "Up to 14 attributes per zone (bell audible, bypass, etc.).",
+        "Description": "Zone attributes are toggle options that refine each zone’s behavior: bell output, EOL style, force-arm, etc.",
         "001-0128 (see PowerSeries Neo reference manual for defaults)": {
           "Description": "Toggle each attribute for zones 1–128.",
           "1 -- Bell Audible": {
-            "Description": "Alarm triggers the main bell or siren."
+            "Description": "TOGGLE OPTION #1\n\nON – BELL AUDIBLE:\nIf this toggle is ON, the bell output provides a steady output when an alarm is generated.\n\nOFF – BELL SILENT:\nIf OFF, an alarm on this zone will not activate the bell."
           },
           "2 -- Bell Steady": {
-            "Description": "Use steady bell instead of pulsed."
+            "Description": "TOGGLE OPTION #2\n\nON – BELL STEADY:\nIf ON, an alarm on this zone will activate a steady bell output.\n\nOFF – BELL PULSED:\nIf OFF (and attribute #1 is ON), the bell is pulsed at 1 second ON / 1 second OFF, typically indicating fire alarms."
           },
           "3 -- Door Chime": {
-            "Description": "Sounds chime when this zone is opened if disarmed."
+            "Description": "TOGGLE OPTION #3\n\nON – DOOR CHIME ON:\nIf ON, when chime is enabled ([*][4]) this zone chimes if violated/secured.\n\nOFF – DOOR CHIME OFF:\nZone will not chime when violated if toggle is OFF."
           },
           "4 -- Bypass Enabled": {
-            "Description": "User can bypass this zone if needed."
+            "Description": "TOGGLE OPTION #4\n\nON – BYPASS ENABLED:\nZone can be bypassed if selected in [*][1].\n\nOFF – BYPASS DISABLED:\nUser cannot bypass this zone; keypad beeps error if attempted."
           },
           "5 -- Force Arm": {
-            "Description": "Allows arming even if zone is open (auto-bypass)."
+            "Description": "TOGGLE OPTION #5\n\nON – FORCE ARM ENABLED:\nZone can be open while arming; it auto-bypasses if violated.\n\nOFF – FORCE ARM DISABLED:\nZone must be secured before arming."
           },
           "6 -- Swinger Shutdown": {
-            "Description": "Limits repeated alarms from this zone in one arming period."
+            "Description": "TOGGLE OPTION #6\n\nON – SWINGER SHUTDOWN ENABLED:\nAfter a set number of alarms, zone stops reporting more alarms for that arming period or until midnight.\n\nOFF – SWINGER SHUTDOWN DISABLED:\nAll alarms from this zone are always reported."
           },
           "7 -- Transmission Delay": {
-            "Description": "Delays reporting for this zone alarm."
+            "Description": "TOGGLE OPTION #7\n\nON – TRANSMISSION DELAY ENABLED:\nZone alarm is held until the panel’s transmission delay expires. If user disarms in that window, no report is sent.\n\nOFF – TRANSMISSION DELAY DISABLED:\nAlarm is transmitted instantly."
           },
           "8 -- Burglary Verification": {
-            "Description": "Requires multiple triggers for verification of burglary."
+            "Description": "TOGGLE OPTION #8\n\nON – BURGLARY VERIFICATION ENABLED:\nRequires another zone with cross zone enabled or additional triggers to confirm an alarm before reporting.\n\nOFF – BURGLARY VERIFICATION DISABLED:\nZone alarms are immediate."
           },
           "9 -- Normally Closed EOL": {
-            "Description": "Wiring style (NC w/ EOL resistor)."
+            "Description": "TOGGLE OPTION #9\n\nON – N/C LOOP:\nHardwired zone does not require EOL resistor.\n\nOFF – N/C LOOP DISABLED:\nFollows global zone wiring settings in [013]."
           },
           "10 -- Single EOL": {
-            "Description": "Wiring style (single end-of-line)."
+            "Description": "TOGGLE OPTION #10\n\nON – SINGLE EOL:\nForces single EOL resistor wiring on this zone.\n\nOFF – SINGLE EOL DISABLED:\nFollows [013] zone wiring supervision settings."
           },
           "11 -- Double EOL": {
-            "Description": "Wiring style (double end-of-line)."
+            "Description": "TOGGLE OPTION #11\n\nON – DOUBLE EOL:\nForces double EOL resistor wiring for this zone.\n\nOFF – DOUBLE EOL DISABLED:\nFollows [013] for zone wiring supervision."
           },
           "12 -- Fast Loop/Normal Loop Response": {
-            "Description": "Set how quickly zone triggers are recognized."
+            "Description": "TOGGLE OPTION #12\n\nON – FAST LOOP RESPONSE:\nZone loop is ~50 ms.\n\nOFF – NORMAL LOOP RESPONSE:\nUses the panel’s loop response timer in [005]."
           },
           "13 -- Zone 2-way Audio Activation": {
-            "Description": "Enables audio verification if zone is tripped."
+            "Description": "TOGGLE OPTION #13\n\nON – 2-WAY AUDIO ENABLED:\nTriggers a 2-way audio session (requires HSM2955) upon alarm.\n\nOFF – 2-WAY AUDIO DISABLED:\nNo 2-way audio triggered by this zone."
           },
           "14 -- Holdup Verification": {
-            "Description": "Requires second trigger for holdup alarm verification."
+            "Description": "TOGGLE OPTION #14\n\nON – HOLD UP VERIFICATION ENABLED:\nAlarm from this zone contributes to a verified holdup if multiple triggers occur within the set time.\n\nOFF – HOLD UP VERIFICATION DISABLED:\nAlarm does not count toward verified holdup logic."
           }
         }
       }
@@ -412,154 +416,154 @@ var installerData = {
         "001-164 -- PGM 1-164 Definitions / Type Assignment (default: PGM1=121, PGM2=156, PGM 3-164 =101)": {
           "Description": "Full list of PGM types controlling how the output behaves.",
           "100 -- Null PGM": {
-            "Description": "No assigned function (inactive)."
+            "Description": "PGM OPTION – [100], NULL PGM\n\nOVERVIEW:\nNo function. Output remains inactive."
           },
           "101 -- Burg and Fire Bell Follower": {
-            "Description": "Follows the bell for burglary/fire alarms."
+            "Description": "PGM OPTION – [101], BURGLARY AND FIRE BELL FOLLOWER\n\nOVERVIEW:\nActivates PGM whenever an audible burglary or fire alarm is active.\nOPERATION:\n• Activation: When any audible alarm is sounding.\n• Deactivation: When the alarm is silenced or bell cutoff occurs."
           },
           "102 -- Delayed Fire and Burg": {
-            "Description": "Activates after a delay for fire/burg events."
+            "Description": "PGM OPTION – [102], DELAYED FIRE AND BURGLARY\n\nOVERVIEW:\nSame as [101], but PGM activation may wait for zone transmission delay if applicable.\nOPERATION:\n• Activation: Follows audible alarms, delayed if zone uses TX delay.\n• Deactivation: Alarm acknowledgment or bell cutoff."
           },
           "103 -- Sensor Reset [*][7][2]": {
-            "Description": "PGM triggers the sensor reset command."
+            "Description": "PGM OPTION – [103], SENSOR RESET\n\nOVERVIEW:\nUsed to power latching detectors (like 4-wire smokes). PGM is normally active.\nOPERATION:\n• Deactivates for ~5 seconds when [*][7][2] or sensor reset is triggered, removing power to reset the detector.\n• Then reactivates automatically."
           },
           "104 -- 2-Wire Smoke": {
-            "Description": "Used if PGM is handling a 2-wire smoke loop."
+            "Description": "PGM OPTION – [104], 2-WIRE SMOKE\n\nOVERVIEW:\nOnly valid on PGM2. Powers 2-wire smokes and monitors them for alarm. Hardwired EOL (2.2k).\nOPERATION:\n• Latching smoke detectors can be reset via [*][7][2].\n• Alarm is sensed on PGM2 line if smokes trip."
           },
           "109 -- Courtesy Pulse": {
-            "Description": "Provides a brief courtesy output (e.g., lights)."
+            "Description": "PGM OPTION – [109], COURTESY PULSE\n\nOVERVIEW:\nActivates output during entry delay and exit delay + an additional 2 minutes.\nOPERATION:\n• Useful for turning on lights when entering or exiting."
           },
           "111 -- Keypad Buzzer Follow": {
-            "Description": "PGM follows keypad buzzer activity."
+            "Description": "PGM OPTION – [111], KEYPAD BUZZER FOLLOW\n\nOVERVIEW:\nActivates PGM whenever the keypad buzzer is active (entry delay, door chime, exit delay, audible exit fault, etc.).\nOPERATION:\n• Deactivation occurs when buzzer stops."
           },
           "114 -- Ready To Arm": {
-            "Description": "Active when all zones are secure and system can arm."
+            "Description": "PGM OPTION – [114], READY TO ARM\n\nOVERVIEW:\nOutput goes active if all zones are closed.\nOPERATION:\n• Active when system is ready.\n• Turns off if any zone is violated, removing ready status."
           },
           "115 -- System Armed Status": {
-            "Description": "Active whenever panel is armed (any mode)."
+            "Description": "PGM OPTION – [115], SYSTEM ARMED STATUS\n\nOVERVIEW:\nActivates when the system is armed (all selected partitions).\nOPERATION:\n• Deactivates when disarmed.\n• The exit delay can also be included or excluded depending on programming ([018], option 3)."
           },
           "116 -- Away Armed Status": {
-            "Description": "Active only in Away mode."
+            "Description": "PGM OPTION – [116], AWAY ARMED STATUS\n\nOPERATION:\n• Active if system is armed Away.\n• Turns off if disarmed or armed Stay.\n\nAPPLICATION:\nUsed to indicate specifically that the system is in Away mode."
           },
           "117 -- Stay Armed Status": {
-            "Description": "Active only in Stay mode."
+            "Description": "PGM OPTION – [117], STAY ARMED STATUS\n\nOPERATION:\n• Activates if system is armed in Stay.\n• Deactivates if disarmed or if system is armed Away.\n\nAPPLICATION:\nUsed to show specifically that the panel is in Stay mode."
           },
           "120 -- Away Armed with no Zone Bypass Status": {
-            "Description": "Active if away-armed and no zones were bypassed."
+            "Description": "PGM OPTION – [120], AWAY ARMED WITH NO ZONE BYPASS STATUS\n\nOPERATION:\n• Activates if the system is armed Away without any manual bypassed zones. Turns off if a bypass is added or if system changes mode."
           },
           "121 -- Command Output 1": {
-            "Description": "Triggered by user command [*][7][1]."
+            "Description": "PGM OPTION – [121], COMMAND OUTPUT #1\n\nOPERATION:\n• Triggered by [*][7][1]. Typically requires a code by default.\n• Default 5s activation.\n• May be scheduled or have attributes set for latching/timing."
           },
           "122 -- Command Output 2": {
-            "Description": "Triggered by [*][7][2]."
+            "Description": "PGM OPTION – [122], COMMAND OUTPUT #2\n\nOPERATION:\n• Triggered by [*][7][2]. Default 5s timer.\n• Code required unless changed.\n• May be linked to schedules or attributes in [010][011]."
           },
           "123 -- Command Output 3": {
-            "Description": "Triggered by [*][7][3]."
+            "Description": "PGM OPTION – [123], COMMAND OUTPUT #3\n\nOPERATION:\n• Triggered by [*][7][3].\n• Default 5s or latched per attributes.\n• Commonly used for gates, lighting, or other user-initiated outputs."
           },
           "124 -- Command Output 4": {
-            "Description": "Triggered by [*][7][4]."
+            "Description": "PGM OPTION – [124], COMMAND OUTPUT #4\n\nOPERATION:\n• Triggered by [*][7][4].\n• Similar logic to 121–123, separate channel.\n• Time and code requirements in attributes."
           },
           "129 -- Partition Status Alarm Memory": {
-            "Description": "Latched if an alarm occurred (until cleared)."
+            "Description": "PGM OPTION – [129], PARTITION STATUS ALARM MEMORY\n\nOPERATION:\n• Steady output if partition(s) are armed. Pulses if an alarm has occurred (latched) until disarmed or memory is cleared.\n• Commonly used for an external LED or plate indicating arm/alarm state."
           },
           "132 -- Holdup Output": {
-            "Description": "Active when a holdup/panic zone is triggered."
+            "Description": "PGM OPTION – [132], HOLDUP OUTPUT\n\nOPERATION:\n• Latches on alarm if a 24Hr Holdup zone ([042]) goes into alarm.\n• Reset by disarming or code entry.\n\nAPPLICATION:\nUsed to drive an indicator or external system for hold-up triggers."
           },
-          "134 -- 24Hr Silent Input": {
-            "Description": "Follows a silent 24-hr zone input."
+          "134 -- 24Hr Silent Input (PGM2)": {
+            "Description": "PGM OPTION – [134], 24 HOUR SILENT INPUT (PGM 2)\n\nOPERATION:\n• PGM2 is wired with a 2.2k resistor to AUX(+) and a normally open device.\n• If triggered, logs/transmits a silent alarm.\n\nAPPLICATION:\nUsed as a separate 24Hr zone on PGM2."
           },
-          "135 -- 24Hr Audible Input": {
-            "Description": "Follows a 24-hr audible zone input."
+          "135 -- 24Hr Audible Input (PGM2)": {
+            "Description": "PGM OPTION – [135], 24 HOUR AUDIBLE INPUT (PGM 2)\n\nOPERATION:\n• PGM2 used as an audible 24Hr zone input with a 2.2k resistor.\n• If triggered, an audible alarm is generated.\n\nAPPLICATION:\nAnother zone on PGM2, but with a siren output."
           },
           "146 -- TLM and Alarm": {
-            "Description": "Active if phone line trouble and an alarm occur together."
+            "Description": "PGM OPTION – [146], TLM AND ALARM\n\nOPERATION:\n• Activates if an alarm occurs while phone line is in trouble.\n• Deactivates when alarm is acknowledged or bell cutoff.\n\nAPPLICATION:\nUsed to indicate an alarm couldn’t dial out over PSTN (TLM trouble)."
           },
           "147 -- Kissoff": {
-            "Description": "Active when central station acknowledges signal."
+            "Description": "PGM OPTION – [147], KISSOFF OUTPUT\n\nOPERATION:\n• Activates for 2 seconds after a successful communication kiss-off.\n\nAPPLICATION:\nCan be used to blink an LED or beep a device upon successful central station communication."
           },
           "148 -- Ground Start": {
-            "Description": "Used in certain phone line setups requiring ground start."
+            "Description": "PGM OPTION – [148], GROUND START\n\nOPERATION:\n• Activates 2s before dialing to accommodate certain phone line setups requiring ground start.\n\nAPPLICATION:\nUsed in regions/areas with ground start telephone lines."
           },
           "149 -- Alternate Communicator": {
-            "Description": "Follows events from the alternate comm module."
+            "Description": "PGM OPTION – [149], ALTERNATE COMMUNICATOR\n\nOPERATION:\n• Activates for selected system events (fire, panic, burglary, etc.) if those bits are toggled in PGM attributes.\n• Latches until disarm if triggered armed.\n\nAPPLICATION:\nUsed with IP or GSM modules, or for specialized control upon certain alarm events."
           },
           "155 -- System Trouble": {
-            "Description": "Active on any system trouble."
+            "Description": "PGM OPTION – [155], SYSTEM TROUBLE\n\nOVERVIEW:\nActivates if any selected system trouble condition is present. Deactivates when all are cleared.\n\nAPPLICATION:\nDrive an external trouble LED or buzzer for service required, AC fail, battery low, etc."
           },
           "156 -- Latched System Event": {
-            "Description": "Latches on system event until reset."
+            "Description": "PGM OPTION – [156], LATCHED SYSTEM EVENT (STROBE)\n\nOVERVIEW:\nActivates on any chosen alarm type (burglary, fire, panic, medical, supervisory, etc.) and stays on until code entry.\n\nAPPLICATION:\nOften used for a strobe or other device that must remain active until user resets the alarm."
           },
           "157 -- System Tamper": {
-            "Description": "Active when there's a tamper anywhere in the system."
+            "Description": "PGM OPTION – [157], SYSTEM TAMPER\n\nOVERVIEW:\nActivates if any zone or module tamper occurs.\n\nOPERATION:\n• Stays active until tamper(s) are cleared.\n• Commonly used to drive an external tamper indicator or relay."
           },
           "161 -- DC Trouble": {
-            "Description": "Monitors battery/DC trouble conditions."
+            "Description": "PGM OPTION – [161], DC TROUBLE\n\nOPERATION:\n• Activates on low/absent panel battery, module battery trouble, or wireless device low battery.\n• Deactivates once conditions clear or after code reset.\n\nAPPLICATION:\nIndicates battery or DC power issues for entire system."
           },
           "165 -- Prox Used": {
-            "Description": "Triggers when a prox tag arms/disarms the system."
+            "Description": "PGM OPTION – [165], PROXIMITY TAG USED\n\nOPERATION:\n• Activates whenever the assigned user’s prox tag is presented.\n• Timer or latched output depends on attributes.\n\nAPPLICATION:\nFor lights or doors triggered by a specific user tag."
           },
           "166 -- Partition Prox Used": {
-            "Description": "Partition-specific prox usage event."
+            "Description": "PGM OPTION – [166], PARTITION PROX USED\n\nOPERATION:\n• Activates when any user’s prox tag is used on that partition.\n• Timer or latch per attributes.\n\nAPPLICATION:\nGeneral partition-level prox detection (any user)."
           },
           "175 -- Bell Status and Programming Access Output": {
-            "Description": "Follows bell activity or panel in programming."
+            "Description": "PGM OPTION – [175], BELL STATUS AND PROGRAMMING ACCESS OUTPUT\n\nOPERATION:\n• Activates if bell is active or the panel is in Installer/DLS session.\n• Deactivates after bell times out or programming ends.\n\nAPPLICATION:\nGives external indication of alarm bell or panel in program mode."
           },
           "176 -- Remote Operation": {
-            "Description": "Active if a remote command is executed (via software)."
+            "Description": "PGM OPTION – [176], REMOTE OPERATION\n\nOPERATION:\n• Toggled by DLS software for remote on/off control.\n\nAPPLICATION:\nAllows a service provider to turn a PGM on or off remotely, ignoring local triggers."
           },
           "184 -- Open After Alarm": {
-            "Description": "Triggers when the system is disarmed following an alarm."
+            "Description": "PGM OPTION – [184], OPEN AFTER ALARM\n\nOPERATION:\n• Activates if the panel is disarmed after an alarm event.\n• Remains until a timer ends or the system is re-armed, depending on attributes.\n\nAPPLICATION:\nUsed to signal an “alarm occurred, then disarmed” condition for external logging or strobe."
           },
           "200 -- Zone Follower": {
-            "Description": "Follows a single zone's open/close or alarm events."
+            "Description": "PGM OPTION – [200], ZONE FOLLOWER – SINGLE ZONE\n\nOPERATION:\n• Follows a single zone’s state selected in [011].\n• Active if that zone is open or in alarm, off if zone secures.\n\nAPPLICATION:\nTie a specific device action to exactly one zone’s open/close."
           },
           "201 -- Follower-Zones 1-8": {
-            "Description": "Follows zones 1-8 collectively."
+            "Description": "PGM OPTION – [201] – Follows zones 1–8\n\nOPERATION:\n• Activates if any zone in 1–8 is violated.\n• Deactivates when all are secure."
           },
           "202 -- Follower-Zones 9-16": {
-            "Description": "Follows zones 9-16 collectively."
+            "Description": "PGM OPTION – [202] – Follows zones 9–16\n\nOPERATION:\n• Activates if any zone in 9–16 is violated.\n• Deactivates when all are secure."
           },
           "203 -- Follower-Zones 17-24": {
-            "Description": "Follows zones 17-24 collectively."
+            "Description": "PGM OPTION – [203] – Follows zones 17–24\n\nOPERATION:\n• Activates if any zone in 17–24 is violated.\n• Deactivates when all are secure."
           },
           "204 -- Follower-Zones 25-32": {
-            "Description": "Follows zones 25-32 collectively."
+            "Description": "PGM OPTION – [204] – Follows zones 25–32\n\nOPERATION:\n• Activates if any zone in 25–32 is violated.\n• Deactivates when all are secure."
           },
           "205 -- Follower-Zones 33-40": {
-            "Description": "Follows zones 33-40 collectively."
+            "Description": "PGM OPTION – [205] – Follows zones 33–40\n\nOPERATION:\n• Activates if any zone in 33–40 is violated.\n• Deactivates when all are secure."
           },
           "206 -- Follower-Zones 41-48": {
-            "Description": "Follows zones 41-48 collectively."
+            "Description": "PGM OPTION – [206] – Follows zones 41–48\n\nOPERATION:\n• Activates if any zone in 41–48 is violated.\n• Deactivates when all are secure."
           },
           "207 -- Follower-Zones 49-56": {
-            "Description": "Follows zones 49-56 collectively."
+            "Description": "PGM OPTION – [207] – Follows zones 49–56\n\nOPERATION:\n• Activates if any zone in 49–56 is violated.\n• Deactivates when all are secure."
           },
           "208 -- Follower-Zones 57-64": {
-            "Description": "Follows zones 57-64 collectively."
+            "Description": "PGM OPTION – [208] – Follows zones 57–64\n\nOPERATION:\n• Activates if any zone in 57–64 is violated.\n• Deactivates when all are secure."
           },
           "209 -- Follower-Zones 65-72": {
-            "Description": "Follows zones 65-72 collectively."
+            "Description": "PGM OPTION – [209] – Follows zones 65–72\n\nOPERATION:\n• Activates if any zone in 65–72 is violated.\n• Deactivates when all are secure."
           },
           "210 -- Follower-Zones 73-80": {
-            "Description": "Follows zones 73-80 collectively."
+            "Description": "PGM OPTION – [210] – Follows zones 73–80\n\nOPERATION:\n• Activates if any zone in 73–80 is violated.\n• Deactivates when all are secure."
           },
           "211 -- Follower-Zones 81-88": {
-            "Description": "Follows zones 81-88 collectively."
+            "Description": "PGM OPTION – [211] – Follows zones 81–88\n\nOPERATION:\n• Activates if any zone in 81–88 is violated.\n• Deactivates when all are secure."
           },
           "212 -- Follower-Zones 89-96": {
-            "Description": "Follows zones 89-96 collectively."
+            "Description": "PGM OPTION – [212] – Follows zones 89–96\n\nOPERATION:\n• Activates if any zone in 89–96 is violated.\n• Deactivates when all are secure."
           },
           "213 -- Follower-Zones 97-104": {
-            "Description": "Follows zones 97-104 collectively."
+            "Description": "PGM OPTION – [213] – Follows zones 97–104\n\nOPERATION:\n• Activates if any zone in 97–104 is violated.\n• Deactivates when all are secure."
           },
           "214 -- Follower-Zones 105-112": {
-            "Description": "Follows zones 105-112 collectively."
+            "Description": "PGM OPTION – [214] – Follows zones 105–112\n\nOPERATION:\n• Activates if any zone in 105–112 is violated.\n• Deactivates when all are secure."
           },
           "215 -- Follower-Zones 113-120": {
-            "Description": "Follows zones 113-120 collectively."
+            "Description": "PGM OPTION – [215] – Follows zones 113–120\n\nOPERATION:\n• Activates if any zone in 113–120 is violated.\n• Deactivates when all are secure."
           },
           "216 -- Follower-Zones 120-128": {
-            "Description": "Follows zones 120-128 collectively."
+            "Description": "PGM OPTION – [216] – Follows zones 120–128\n\nOPERATION:\n• Activates if any zone in 120–128 is violated.\n• Deactivates when all are secure."
           }
         }
       },
