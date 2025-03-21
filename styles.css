@@ -71,18 +71,19 @@ button {
     background-color: yellow;
 }
 
-/* A hidden or toggled description box for each node */
+/* A hidden or toggled description box for each node 
+   -- Updated to remove italics and preserve whitespace */
 .descBox {
     margin-left: 30px;
-    font-style: italic;
     color: #444;
-    display: none; /* hidden by default, toggled by (i) */
+    display: none; 
+    white-space: pre-wrap; /* preserve newlines and spacing */
 }
 
 /* Generate output area */
 #outputText {
     width: 100%;
     margin-top: 20px;
-    white-space: pre; /* preserve indentation */
+    white-space: pre; /* preserve indentation in the textarea */
     font-family: monospace;
 }
